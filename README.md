@@ -10,19 +10,20 @@ This repository uses Git LFS for tracking large files.
 2. Set up Git LFS and its respective hooks by running:
     `git lfs install`
 
-### 2. Set your git config
+### 2. Git config
+1. Set username and email:
     `git config --global user.name "FIRSTNAME LASTNAME"`
     `git config --global user.email "YOUR_GITLAB_EMAIL"`
-    
+
 ### 3. Local project setup
 1. Create or navigate to folder you want to store your projects to.
-2. Open git bash or terminal in that directory and clone repository.
+2. Open git bash or terminal in that directory and clone repository:
     `git clone https://gitlab.com/Pygmicaesar/virtual-public-displays.git`
 
 ### 4. Set local dev branch
-1. Navigate to git directory
+1. Navigate to git directory:
     `cd virtual-public-displays`
-2. Create your own dev branch
+2. Create your own dev branch:
     `git checkout -b dev/FIRSTNAME`
 
 ### 5. Configure Unity for version control
