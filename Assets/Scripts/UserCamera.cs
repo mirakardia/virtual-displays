@@ -13,14 +13,7 @@ public class UserCamera : MonoBehaviour
 
     private void Awake()
     {
-        LockCursor();
         xAxisClamp = 0.0f;
-    }
-
-
-    private void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
