@@ -26,9 +26,17 @@ public class UserController : MonoBehaviour
 
         movement.Move(velocity);
 
-        if (Input.GetKeyDown("escape"))
-        {
-            Cursor.lockState = CursorLockMode.None;
+        // Put debug shortcuts behind modifier key (leftShift).
+        if(Input.GetKey(KeyCode.LeftShift)) {
+            if (Input.GetKeyDown("escape")) {
+                if (Cursor.lockState != CursorLockMode.None) {
+                    Cursor.lockState = CursorLockMode.None;
+                    Debug.Log("Shift + Esc disengages user controls.");
+                } else {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Debug.Log("Shift + Esc engages user controls.");
+                }
+            }
         }
     }
 }
