@@ -723,7 +723,7 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 1398479910}
   m_PrefabAsset: {fileID: 0}
---- !u!43 &574414826
+--- !u!43 &601428608
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1630,7 +1630,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2e5d4e4e83fc32499609d1e3688fe65, type: 3}
---- !u!21 &1209352469
+--- !u!21 &1203770784
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -1957,11 +1957,11 @@ PrefabInstance:
     - target: {fileID: 2348914, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1209352469}
+      objectReference: {fileID: 1203770784}
     - target: {fileID: 3380982, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 574414826}
+      objectReference: {fileID: 601428608}
     - target: {fileID: 2168867535156906162, guid: 4d293c8e162f3874b982baadd71153d2,
         type: 3}
       propertyPath: m_InputModule
@@ -21418,6 +21418,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4440019680235000506, guid: 2bfde280ef2f42843bde9950496a05ee,
+        type: 3}
+      propertyPath: m_StoppingDistance
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bfde280ef2f42843bde9950496a05ee, type: 3}
