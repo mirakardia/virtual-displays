@@ -8,8 +8,6 @@ public class WaypointPatrol : MonoBehaviour
     // Virtual agent
     public NavMeshAgent navMeshAgent;
 
-    // private Animator m_Animator;
-
     // Array of coordinates virtual agent travels through
     public Transform[] waypoints;
 
@@ -18,14 +16,8 @@ public class WaypointPatrol : MonoBehaviour
 
     void Start()
     {
-        startingPoint = new Vector3(-53.3f, 2.2f, -0.3f);
-        // Start at first waypoint: WIP
 
-        navMeshAgent.Warp(startingPoint);
-
-        // m_rb.GetComponent<Rigidbody>();
-        // m_Animator.GetComponent<Animator>();
-
+        // Start at first waypoint
         navMeshAgent.SetDestination(waypoints[0].position);
     }
 
