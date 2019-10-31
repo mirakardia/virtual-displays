@@ -13,7 +13,9 @@ public class WaypointPatrol : MonoBehaviour
     Animator animator;
 
     int m_CurrentWayPointIndex;
+    bool playerInSight;
     float waitTime;     // How long virtual agent waits at a waypoint
+    float arrivalTime;  // When VA arrived to a waypoint
 
     void Start()
     {
@@ -26,21 +28,47 @@ public class WaypointPatrol : MonoBehaviour
 
     void Update()
     {
-        // After reaching a waypoint wait for waitTime, then move to next waypoint 
-        // If at last waypoint then virtual agent goes to the first waypoint
-        if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+        if (playerInSight)
         {
-            animator.SetBool("IsWalking", false);
-            waitTime -= Time.deltaTime;
+            Debug.Log("pelaaja spotattu'd");
+        }
 
-            if (waitTime <= 0)
+        else if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+        {
+            if (animator.GetBool("IsWalking") == true)
             {
-                animator.SetBool("IsWalking", true);
-                m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
-
-                navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
-                waitTime = Random.Range(4.0f, 8.0f);
+                arriveToWaypoint();
+            }
+            
+            else if (Time.time > arrivalTime + waitTime)
+            {
+                moveToNextWaypoint();
             }
         }
+    }
+
+    private void playerEnter()
+    {
+        playerInSight = true;
+    }
+
+    private void playerExit()
+    {
+        playerInSight = false;
+        moveToNextWaypoint();
+    }
+
+    private void arriveToWaypoint()
+    {
+        animator.SetBool("IsWalking", false);
+        waitTime = Random.Range(4.0f, 8.0f);
+        arrivalTime = Time.time;
+        m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
+    }
+
+    private void moveToNextWaypoint()
+    {
+        animator.SetBool("IsWalking", true);
+        navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
     }
 }
