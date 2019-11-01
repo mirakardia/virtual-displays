@@ -6,11 +6,15 @@ public class PlayerDetection : MonoBehaviour
 {
     public Transform player;
 
+    // Waypoint patrol needs to know if a player is spotted
+    public WaypointPatrol waypointPatrol;
+
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.transform == player)
         {
-            Debug.Log("pelaaja spotattu'd");
+            waypointPatrol.playerEnter();
         }
         
     }
@@ -19,8 +23,7 @@ public class PlayerDetection : MonoBehaviour
     {
         if(other.transform == player)
         {
-            Debug.Log("pelaaja kadotettu'd");
+            waypointPatrol.playerExit();
         }
-        
     }
 }

@@ -9,6 +9,7 @@ public class WaypointPatrol : MonoBehaviour
 
     // Array of coordinates virtual agent travels through
     public Transform[] waypoints;
+    public Transform player;
 
     Animator animator;
 
@@ -30,7 +31,17 @@ public class WaypointPatrol : MonoBehaviour
     {
         if (playerInSight)
         {
-            Debug.Log("pelaaja spotattu'd");
+            if (animator.GetBool("IsWalking") == true)
+            {
+                animator.SetBool("IsWalking", false);
+                navMeshAgent.isStopped = true;
+            }
+
+            if (player && Vector3.Distance(player.position, this.transform.position) >= 8f)
+            {
+                // Ignore the Y axis.
+                this.transform.LookAt(new Vector3(player.position.x, this.transform.position.y, player.position.z));
+            }
         }
 
         else if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
@@ -47,12 +58,12 @@ public class WaypointPatrol : MonoBehaviour
         }
     }
 
-    private void playerEnter()
+    public void playerEnter()
     {
         playerInSight = true;
     }
 
-    private void playerExit()
+    public void playerExit()
     {
         playerInSight = false;
         moveToNextWaypoint();
@@ -68,6 +79,11 @@ public class WaypointPatrol : MonoBehaviour
 
     private void moveToNextWaypoint()
     {
+        if(navMeshAgent.isStopped == true)
+        {
+            navMeshAgent.isStopped = false;
+        }
+
         animator.SetBool("IsWalking", true);
         navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
     }
