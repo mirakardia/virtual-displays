@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VAvision : MonoBehaviour
+public class PlayerDetection : MonoBehaviour
 {
     public Transform player;
 
