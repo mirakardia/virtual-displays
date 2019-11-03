@@ -1958,6 +1958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navMeshAgent: {fileID: 4440019680235000506}
   waypoints: []
+  player: {fileID: 0}
 --- !u!1 &452366587679667096
 GameObject:
   m_ObjectHideFlags: 0
@@ -3078,3 +3079,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  waypointPatrol: {fileID: 2270956227324900706}

@@ -29,6 +29,8 @@ public class WaypointPatrol : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(navMeshAgent.remainingDistance);
+
         if (playerInSight)
         {
             if (animator.GetBool("IsWalking") == true)
@@ -44,10 +46,11 @@ public class WaypointPatrol : MonoBehaviour
             }
         }
 
-        else if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+        else if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance && !navMeshAgent.pathPending)
         {
             if (animator.GetBool("IsWalking") == true)
             {
+                Debug.Log(navMeshAgent.remainingDistance);
                 arriveToWaypoint();
             }
             
@@ -71,6 +74,7 @@ public class WaypointPatrol : MonoBehaviour
 
     private void arriveToWaypoint()
     {
+        Debug.Log("arrived at " + m_CurrentWayPointIndex);
         animator.SetBool("IsWalking", false);
         waitTime = Random.Range(4.0f, 8.0f);
         arrivalTime = Time.time;
@@ -83,6 +87,8 @@ public class WaypointPatrol : MonoBehaviour
         {
             navMeshAgent.isStopped = false;
         }
+
+        Debug.Log("going to " + m_CurrentWayPointIndex);
 
         animator.SetBool("IsWalking", true);
         navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
