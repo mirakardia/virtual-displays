@@ -7,7 +7,7 @@ public class PlayerDetection : MonoBehaviour
     public Transform player;
 
     // Waypoint patrol needs to know if a player is spotted
-    public WaypointPatrol waypointPatrol;
+    public WaypointPatrolOptimized waypointPatrol;
 
 
     private void OnTriggerEnter(Collider other)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WaypointPatrol : MonoBehaviour
+public class WaypointPatrolOptimized : MonoBehaviour
 {
     public NavMeshAgent navMeshAgent;
 
@@ -29,8 +29,6 @@ public class WaypointPatrol : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(navMeshAgent.remainingDistance);
-
         if (playerInSight)
         {
             if (animator.GetBool("IsWalking") == true)
@@ -43,20 +41,6 @@ public class WaypointPatrol : MonoBehaviour
             {
                 // Ignore the Y axis.
                 this.transform.LookAt(new Vector3(player.position.x, this.transform.position.y, player.position.z));
-            }
-        }
-
-        else if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance && !navMeshAgent.pathPending)
-        {
-            if (animator.GetBool("IsWalking") == true)
-            {
-                Debug.Log(navMeshAgent.remainingDistance);
-                arriveToWaypoint();
-            }
-            
-            else if (Time.time > arrivalTime + waitTime)
-            {
-                moveToNextWaypoint();
             }
         }
     }
@@ -74,20 +58,22 @@ public class WaypointPatrol : MonoBehaviour
 
     public void arriveToWaypoint()
     {
-        Debug.Log("arrived at " + m_CurrentWayPointIndex);
         animator.SetBool("IsWalking", false);
+        navMeshAgent.updateRotation = false;
         waitTime = Random.Range(4.0f, 8.0f);
-        arrivalTime = Time.time;
         m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
+
+        Invoke("moveToNextWaypoint", waitTime);
     }
 
     public void moveToNextWaypoint()
     {
-        if(navMeshAgent.isStopped == true)
+        if (navMeshAgent.isStopped == true)
         {
             navMeshAgent.isStopped = false;
         }
 
+        navMeshAgent.updateRotation = true;
         animator.SetBool("IsWalking", true);
         navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
     }
