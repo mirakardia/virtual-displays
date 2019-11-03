@@ -9,14 +9,15 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
     // Array of coordinates virtual agent travels through
     public Transform[] waypoints;
+
+    // The player character
     public Transform player;
 
     Animator animator;
 
-    int m_CurrentWayPointIndex;
-    bool playerInSight;
-    float waitTime;     // How long virtual agent waits at a waypoint
-    float arrivalTime;  // When VA arrived to a waypoint
+    int m_CurrentWayPointIndex; //Where virtual agent is going to next
+    bool playerInSight;         // If virtual agent sees player
+    float waitTime;             // How long virtual agent waits at a waypoint
 
     void Start()
     {
@@ -29,6 +30,7 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
     void Update()
     {
+        // Turn toward player when player is in line of sight
         if (playerInSight)
         {
             if (animator.GetBool("IsWalking") == true)
@@ -56,13 +58,16 @@ public class WaypointPatrolOptimized : MonoBehaviour
         moveToNextWaypoint();
     }
 
+    // Player arrives to waypoint, called by WaypointEntryTrigger.cs
     public void arriveToWaypoint()
     {
         animator.SetBool("IsWalking", false);
         navMeshAgent.updateRotation = false;
+
         waitTime = Random.Range(4.0f, 8.0f);
         m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
 
+        // Move to next waypoint after wait time
         Invoke("moveToNextWaypoint", waitTime);
     }
 

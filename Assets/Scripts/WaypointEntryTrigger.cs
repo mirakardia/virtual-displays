@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class WaypointEntryTrigger : MonoBehaviour
 {
+    // VirtualAgent that uses the waypoint
     public Transform virtualAgent;
 
-    // Waypoint patrol needs to know when a waypoint is reached
+    // WaypointPatrol needs to know when a waypoint is reached
     public WaypointPatrolOptimized waypointPatrol;
 
     private void OnTriggerEnter(Collider other)
