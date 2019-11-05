@@ -61,18 +61,26 @@ public class WaypointPatrolOptimized : MonoBehaviour
     // Player arrives to waypoint, called by WaypointEntryTrigger.cs
     public void arriveToWaypoint()
     {
-        animator.SetBool("IsWalking", false);
-        navMeshAgent.updateRotation = false;
+        Debug.Log("Arrived at " + m_CurrentWayPointIndex);
+        Debug.Log("Dist: " + navMeshAgent.remainingDistance);
 
-        waitTime = Random.Range(4.0f, 8.0f);
-        m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
+        if (navMeshAgent.remainingDistance < 1.5 && !navMeshAgent.pathPending)
+        {
+            animator.SetBool("IsWalking", false);
+            navMeshAgent.updateRotation = false;
 
-        // Move to next waypoint after wait time
-        Invoke("moveToNextWaypoint", waitTime);
+            waitTime = Random.Range(4.0f, 8.0f);
+            m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
+
+            // Move to next waypoint after wait time
+            Invoke("moveToNextWaypoint", waitTime);
+        }
     }
 
     public void moveToNextWaypoint()
     {
+        Debug.Log("Going to " + m_CurrentWayPointIndex);
+
         if (navMeshAgent.isStopped == true)
         {
             navMeshAgent.isStopped = false;
