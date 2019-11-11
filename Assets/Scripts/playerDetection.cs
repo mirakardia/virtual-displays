@@ -14,7 +14,7 @@ public class PlayerDetection : MonoBehaviour
     {
         if(other.transform == player)
         {
-            waypointPatrol.playerEnter();
+            waypointPatrol.playerEnterLineOfSight();
         }
         
     }

@@ -9,7 +9,6 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
     // Array of coordinates virtual agent travels through
     public Transform[] waypoints;
-
     // The player character
     public Transform player;
 
@@ -17,7 +16,9 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
     int m_CurrentWayPointIndex; //Where virtual agent is going to next
     bool playerInSight;         // If virtual agent sees player
-    float waitTime;             // How long virtual agent waits at a waypoint
+    float waypointIdleTime;     // How long virtual agent waits at a waypoint
+    float playerStareTime;      // How long virtual agent stares at player
+    float startTime;            // When staring has commenced
 
     void Start()
     {
@@ -25,7 +26,7 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
         navMeshAgent.SetDestination(waypoints[0].position);
         animator.SetBool("IsWalking", true);
-        waitTime = Random.Range(4.0f, 8.0f);
+        waypointIdleTime = Random.Range(4.0f, 8.0f);
     }
 
     void Update()
@@ -47,7 +48,7 @@ public class WaypointPatrolOptimized : MonoBehaviour
         }
     }
 
-    public void playerEnter()
+    public void playerEnterLineOfSight()
     {
         playerInSight = true;
     }
@@ -69,11 +70,11 @@ public class WaypointPatrolOptimized : MonoBehaviour
             animator.SetBool("IsWalking", false);
             navMeshAgent.updateRotation = false;
 
-            waitTime = Random.Range(4.0f, 8.0f);
+            waypointIdleTime = Random.Range(4.0f, 8.0f);
             m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
 
             // Move to next waypoint after wait time
-            Invoke("moveToNextWaypoint", waitTime);
+            Invoke("moveToNextWaypoint", waypointIdleTime);
         }
     }
 
