@@ -16,9 +16,8 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
     int m_CurrentWayPointIndex; //Where virtual agent is going to next
     bool playerInSight;         // If virtual agent sees player
+    bool atWaypoint;            // If player is at a waypoint
     float waypointIdleTime;     // How long virtual agent waits at a waypoint
-    float playerStareTime;      // How long virtual agent stares at player
-    float startTime;            // When staring has commenced
 
     void Start()
     {
@@ -26,7 +25,9 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
         navMeshAgent.SetDestination(waypoints[0].position);
         animator.SetBool("IsWalking", true);
+
         waypointIdleTime = Random.Range(4.0f, 8.0f);
+        atWaypoint = false;
     }
 
     void Update()
@@ -65,8 +66,10 @@ public class WaypointPatrolOptimized : MonoBehaviour
         Debug.Log("Arrived at " + m_CurrentWayPointIndex);
         Debug.Log("Dist: " + navMeshAgent.remainingDistance);
 
-        if (navMeshAgent.remainingDistance < 1.5 && !navMeshAgent.pathPending)
+        if (navMeshAgent.remainingDistance < 1.5 && !atWaypoint)
         {
+            atWaypoint = true;
+
             animator.SetBool("IsWalking", false);
             navMeshAgent.updateRotation = false;
 
@@ -87,6 +90,7 @@ public class WaypointPatrolOptimized : MonoBehaviour
             navMeshAgent.isStopped = false;
         }
 
+        atWaypoint = false;
         navMeshAgent.updateRotation = true;
         animator.SetBool("IsWalking", true);
         navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
