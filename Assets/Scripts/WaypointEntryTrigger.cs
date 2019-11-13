@@ -14,7 +14,7 @@ public class WaypointEntryTrigger : MonoBehaviour
     {
         if (other.transform == virtualAgent)
         {
-            waypointPatrol.arriveToWaypoint();
+            waypointPatrol.ArriveToWaypoint();
         }
 
     }

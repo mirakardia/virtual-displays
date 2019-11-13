@@ -14,7 +14,8 @@ public class PlayerDetection : MonoBehaviour
     {
         if(other.transform == player)
         {
-            waypointPatrol.playerEnterLineOfSight();
+            waypointPatrol.PlayerEnterLineOfSight();
+            StartCoroutine(AutomaticExit());
         }
         
     }
@@ -23,7 +24,21 @@ public class PlayerDetection : MonoBehaviour
     {
         if(other.transform == player)
         {
-            waypointPatrol.playerExit();
+            StopCoroutine(AutomaticExit());
+            waypointPatrol.PlayerExit();
         }
+    }
+
+    IEnumerator AutomaticExit()
+    {
+
+        yield return new WaitForSeconds(8);
+
+        GetComponent<Collider>().enabled = false;
+        Debug.Log("Automatic exit");
+        waypointPatrol.PlayerExit();
+
+        yield return new WaitForSeconds(10);
+        GetComponent<Collider>().enabled = true;
     }
 }

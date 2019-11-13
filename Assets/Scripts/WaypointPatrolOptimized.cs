@@ -30,42 +30,54 @@ public class WaypointPatrolOptimized : MonoBehaviour
         atWaypoint = false;
     }
 
-    void Update()
+    // Turn toward player
+    IEnumerator TurnTowardPlayer()
     {
-        // Turn toward player when player is in line of sight
-        if (playerInSight)
+        while (playerInSight)
         {
-            if (animator.GetBool("IsWalking") == true)
-            {
-                animator.SetBool("IsWalking", false);
-                navMeshAgent.isStopped = true;
-            }
-
-            if (player && Vector3.Distance(player.position, this.transform.position) >= 8f)
-            {
-                // Ignore the Y axis.
-                this.transform.LookAt(new Vector3(player.position.x, this.transform.position.y, player.position.z));
-            }
+            // Ignore the Y axis.
+            this.transform.LookAt(new Vector3(player.position.x, this.transform.position.y, player.position.z));
+            yield return null;
         }
     }
 
-    public void playerEnterLineOfSight()
+    // Stop moving and turn toward player when player is in line of sight
+    public void PlayerEnterLineOfSight()
     {
         playerInSight = true;
+
+        if (IsInvoking("MoveToNextWaypoint"))
+        {
+            CancelInvoke();
+        }
+
+        if (animator.GetBool("IsWalking") == true)
+        {
+            animator.SetBool("IsWalking", false);
+            navMeshAgent.isStopped = true;
+        }
+
+        StartCoroutine(TurnTowardPlayer());
     }
 
-    public void playerExit()
+    // Continue walking when player exits line of sight or when enough time has passed
+    public void PlayerExit()
     {
         playerInSight = false;
-        moveToNextWaypoint();
+        StopCoroutine(TurnTowardPlayer());
+
+        if (atWaypoint){
+            Invoke("MoveToNextWaypoint", waypointIdleTime);
+        }
+        else
+        {
+            MoveToNextWaypoint();
+        }
     }
 
-    // Player arrives to waypoint, called by WaypointEntryTrigger.cs
-    public void arriveToWaypoint()
+    // Virtual agent arrives to waypoint
+    public void ArriveToWaypoint()
     {
-        Debug.Log("Arrived at " + m_CurrentWayPointIndex);
-        Debug.Log("Dist: " + navMeshAgent.remainingDistance);
-
         if (navMeshAgent.remainingDistance < 1.5 && !atWaypoint)
         {
             atWaypoint = true;
@@ -77,13 +89,13 @@ public class WaypointPatrolOptimized : MonoBehaviour
             m_CurrentWayPointIndex = (m_CurrentWayPointIndex + 1) % waypoints.Length;
 
             // Move to next waypoint after wait time
-            Invoke("moveToNextWaypoint", waypointIdleTime);
+            Invoke("MoveToNextWaypoint", waypointIdleTime);
         }
     }
 
-    public void moveToNextWaypoint()
+    // Virtual agent moves to next waypoint
+    public void MoveToNextWaypoint()
     {
-        Debug.Log("Going to " + m_CurrentWayPointIndex);
 
         if (navMeshAgent.isStopped == true)
         {
@@ -92,6 +104,7 @@ public class WaypointPatrolOptimized : MonoBehaviour
 
         atWaypoint = false;
         navMeshAgent.updateRotation = true;
+
         animator.SetBool("IsWalking", true);
         navMeshAgent.SetDestination(waypoints[m_CurrentWayPointIndex].position);
     }
