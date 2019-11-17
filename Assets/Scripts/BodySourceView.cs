@@ -12,7 +12,7 @@ public class BodySourceView : MonoBehaviour
     public GameObject inactiveJoint;
     public GameObject Line;
 
-    static float skeletonScaling = 4f;
+    static float skeletonScaling = 1f;
     public float horizontalScale = 2.0f;
     float currentHorizontalOffset = 0f;
 
@@ -34,15 +34,15 @@ public class BodySourceView : MonoBehaviour
         { Kinect.JointType.KneeRight, Kinect.JointType.HipRight },
         { Kinect.JointType.HipRight, Kinect.JointType.SpineBase },
         
-        //{ Kinect.JointType.HandTipLeft, Kinect.JointType.HandLeft },
-        //{ Kinect.JointType.ThumbLeft, Kinect.JointType.HandLeft },
+        { Kinect.JointType.HandTipLeft, Kinect.JointType.HandLeft },
+        { Kinect.JointType.ThumbLeft, Kinect.JointType.HandLeft },
         { Kinect.JointType.HandLeft, Kinect.JointType.WristLeft },
         { Kinect.JointType.WristLeft, Kinect.JointType.ElbowLeft },
         { Kinect.JointType.ElbowLeft, Kinect.JointType.ShoulderLeft },
         { Kinect.JointType.ShoulderLeft, Kinect.JointType.SpineShoulder },
         
-        //{ Kinect.JointType.HandTipRight, Kinect.JointType.HandRight },
-        //{ Kinect.JointType.ThumbRight, Kinect.JointType.HandRight },
+        { Kinect.JointType.HandTipRight, Kinect.JointType.HandRight },
+        { Kinect.JointType.ThumbRight, Kinect.JointType.HandRight },
         { Kinect.JointType.HandRight, Kinect.JointType.WristRight },
         { Kinect.JointType.WristRight, Kinect.JointType.ElbowRight },
         { Kinect.JointType.ElbowRight, Kinect.JointType.ShoulderRight },
@@ -129,10 +129,11 @@ public class BodySourceView : MonoBehaviour
     {
         GameObject body = new GameObject("Body:" + id);
         body.tag = "Player";
-        body.transform.position += Vector3.up * 0.5f;
+        //body.transform.position += Vector3.up * 0.5f;
 
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
         {
+            /*
             GameObject jointObj;
             if (jt.ToString().Equals("HandRight") || jt.ToString().Equals("HandLeft") || jt.ToString().Equals("Head"))
             {
@@ -145,18 +146,24 @@ public class BodySourceView : MonoBehaviour
                 jointObj = Instantiate(inactiveJoint);
                 jointObj.transform.localScale = new Vector3(0.05f, 0.05f, 0.000001f);
             }
+            */
+
+            GameObject jointObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            jointObj.tag = "Player";
             
-            GameObject Bone = Instantiate(Line);
-            LineRenderer lr = Bone.GetComponent<LineRenderer>();
+            //GameObject Bone = Instantiate(Line);
+            //LineRenderer lr = Bone.GetComponent<LineRenderer>();
+            LineRenderer lr = jointObj.AddComponent<LineRenderer>();
             lr.SetVertexCount(2);
             lr.material = BoneMaterial;
             lr.SetWidth(0.05f, 0.05f);
 
+            jointObj.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             jointObj.name = jt.ToString();
-
             jointObj.transform.parent = body.transform;
-            Bone.transform.parent = body.transform;
-            Bone.name= jt.ToString()+"B";
+
+            //Bone.transform.parent = body.transform;
+            //Bone.name= jt.ToString()+"B";
         }
 
         body.AddComponent<KinectBody>().set(horizontalScale);
@@ -164,6 +171,36 @@ public class BodySourceView : MonoBehaviour
         return body;
     }
 
+    private void RefreshBodyObject(Kinect.Body body, GameObject bodyObject)
+    {
+        for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
+        {
+            Kinect.Joint sourceJoint = body.Joints[jt];
+            Kinect.Joint? targetJoint = null;
+            
+            if(_BoneMap.ContainsKey(jt))
+            {
+                targetJoint = body.Joints[_BoneMap[jt]];
+            }
+            
+            Transform jointObj = bodyObject.transform.Find(jt.ToString());
+            jointObj.localPosition = GetVector3FromJoint(sourceJoint);
+            
+            LineRenderer lr = jointObj.GetComponent<LineRenderer>();
+            if(targetJoint.HasValue)
+            {
+                lr.SetPosition(0, jointObj.localPosition);
+                lr.SetPosition(1, GetVector3FromJoint(targetJoint.Value));
+                lr.SetColors(GetColorForState (sourceJoint.TrackingState), GetColorForState(targetJoint.Value.TrackingState));
+            }
+            else
+            {
+                lr.enabled = false;
+            }
+        }
+    }
+
+    /*
     private void RefreshBodyObject(Kinect.Body body, GameObject bodyObject)
     {
         Kinect.Joint midPoint;
@@ -202,6 +239,7 @@ public class BodySourceView : MonoBehaviour
             Transform Bone= bodyObject.transform.Find(jt.ToString()+"B");
             Bone.position = bodyObject.transform.position;
 
+            /*
             if (jointObj.position.x < publicDisplay.leftEdge || jointObj.position.y > publicDisplay.topEdge ||
                 jointObj.position.y < publicDisplay.bottomEdge || jointObj.position.x > publicDisplay.rightEdge)
             {
@@ -214,6 +252,11 @@ public class BodySourceView : MonoBehaviour
                 Bone.GetComponent<LineRenderer>().enabled = true;
                 Bone.gameObject.SetActive(true);
             }
+            */
+            /*
+            jointObj.gameObject.SetActive(true);
+            Bone.GetComponent<LineRenderer>().enabled = true;
+            Bone.gameObject.SetActive(true);
 
             if (!(jointObj.name.Equals("HandRight") || jointObj.name.Equals("HandLeft") || jointObj.name.Equals("Head")))
             {
@@ -235,6 +278,7 @@ public class BodySourceView : MonoBehaviour
         // Log the final data string.
         Logger.Log("KINECT", "DATA", kinectDataString);
     }
+    */
 
     private static Color GetColorForState(Kinect.TrackingState state)
     {
@@ -256,14 +300,18 @@ public class BodySourceView : MonoBehaviour
         //Considering the vanshing point to be at (0,0,0)
         float x = joint.Position.X *10;
         float y = joint.Position.Y *10;
-        float z = joint.Position.Z *10;
+        float z = joint.Position.Z *(-5);
+        /*
         Vector3 Projected = OnePointPrespectiveProjection(new Vector3(x, y, z), 5.5f);
         Vector3 Translated = new Vector3(Projected.x , Projected.y +7, Projected.z);
         
         return Translated;
+        */
+        return new Vector3(x,y,z);
     }
-    public static Vector3 OnePointPrespectiveProjection(Vector3 coordinates,float d) {
-        
+
+    public static Vector3 OnePointPrespectiveProjection(Vector3 coordinates,float d)
+    {        
         return new Vector3(coordinates.x /(skeletonScaling * (coordinates.z/d)), coordinates.y / (skeletonScaling * (coordinates.z/d)), d);
     }
 }
